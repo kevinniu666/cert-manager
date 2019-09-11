@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
 	"github.com/pkg/errors"
 	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	corev1listers "k8s.io/client-go/listers/core/v1"
@@ -42,6 +41,7 @@ import (
 	"github.com/jetstack/cert-manager/pkg/issuer/acme/dns/util"
 	webhookslv "github.com/jetstack/cert-manager/pkg/issuer/acme/dns/webhook"
 	"github.com/jetstack/cert-manager/pkg/logs"
+	"github.com/kevinniu666/cert-manager/pkg/issuer/acme/dns/alidns"
 )
 
 const (
@@ -59,6 +59,7 @@ type solver interface {
 // It is useful for mocking out a given provider since an alternate set of
 // constructors may be set.
 type dnsProviderConstructors struct {
+	alidns func(accessKey string, secretKey string, regionId string, dns01Nameservers []string) (*alibabacloud.DNSProvider, error)
 	cloudDNS     func(project string, serviceAccount []byte, dns01Nameservers []string, ambient bool) (*clouddns.DNSProvider, error)
 	cloudFlare   func(email, apikey string, dns01Nameservers []string) (*cloudflare.DNSProvider, error)
 	route53      func(accessKey, secretKey, hostedZoneID, region, role string, ambient bool, dns01Nameservers []string) (*route53.DNSProvider, error)
